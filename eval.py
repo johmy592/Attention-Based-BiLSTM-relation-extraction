@@ -10,7 +10,8 @@ from configure import FLAGS
 
 def eval():
     with tf.device('/cpu:0'):
-        x_text, y = data_helpers.load_data_and_labels(FLAGS.test_path)
+        # removed , y
+        x_text = data_helpers.load_data_and_labels(FLAGS.test_path)
 
     # Map data into vocabulary
     text_path = os.path.join(FLAGS.checkpoint_dir, "..", "vocab")
@@ -53,18 +54,18 @@ def eval():
                                               dropout_keep_prob: 1.0})
                 preds.append(pred)
             preds = np.concatenate(preds)
-            truths = np.argmax(y, axis=1)
+            #truths = np.argmax(y, axis=1)
 
             prediction_path = os.path.join(FLAGS.checkpoint_dir, "..", "predictions.txt")
-            truth_path = os.path.join(FLAGS.checkpoint_dir, "..", "ground_truths.txt")
+            #truth_path = os.path.join(FLAGS.checkpoint_dir, "..", "ground_truths.txt")
             prediction_file = open(prediction_path, 'w')
-            truth_file = open(truth_path, 'w')
+            #truth_file = open(truth_path, 'w')
             for i in range(len(preds)):
                 prediction_file.write("{}\t{}\n".format(i, utils.label2class[preds[i]]))
-                truth_file.write("{}\t{}\n".format(i, utils.label2class[truths[i]]))
+            #    truth_file.write("{}\t{}\n".format(i, utils.label2class[truths[i]]))
             prediction_file.close()
-            truth_file.close()
-
+            #truth_file.close()
+            """
             perl_path = os.path.join(os.path.curdir,
                                      "SemEval2010_task8_all_data",
                                      "SemEval2010_task8_scorer-v1.2",
@@ -72,7 +73,7 @@ def eval():
             process = subprocess.Popen(["perl", perl_path, prediction_path, truth_path], stdout=subprocess.PIPE)
             for line in str(process.communicate()[0].decode("utf-8")).split("\\n"):
                 print(line)
-
+            """
 
 def main(_):
     eval()

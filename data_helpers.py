@@ -50,9 +50,9 @@ def load_data_and_labels(path):
     data = []
     lines = [line.strip() for line in open(path)]
     max_sentence_length = 0
-    for idx in range(0, len(lines), 4):
+    for idx in range(0, len(lines)):
         id = lines[idx].split("\t")[0]
-        relation = lines[idx + 1]
+        #relation = lines[idx + 1]
 
         sentence = lines[idx].split("\t")[1][1:-1]
         sentence = sentence.replace('<e1>', ' _e11_ ')
@@ -66,28 +66,28 @@ def load_data_and_labels(path):
             max_sentence_length = len(tokens)
         sentence = " ".join(tokens)
 
-        data.append([id, sentence, relation])
+        data.append([id, sentence])
 
     print(path)
     print("max sentence length = {}\n".format(max_sentence_length))
 
-    df = pd.DataFrame(data=data, columns=["id", "sentence", "relation"])
-    df['label'] = [utils.class2label[r] for r in df['relation']]
+    df = pd.DataFrame(data=data, columns=["id", "sentence"])
+    #df['label'] = [utils.class2label[r] for r in df['relation']]
 
     # Text Data
     x_text = df['sentence'].tolist()
 
     # Label Data
-    y = df['label']
-    labels_flat = y.values.ravel()
-    labels_count = np.unique(labels_flat).shape[0]
+    #y = df['label']
+    #labels_flat = y.values.ravel()
+    #labels_count = np.unique(labels_flat).shape[0]
 
     # convert class labels from scalars to one-hot vectors
     # 0  => [1 0 0 0 0 ... 0 0 0 0 0]
     # 1  => [0 1 0 0 0 ... 0 0 0 0 0]
     # ...
     # 18 => [0 0 0 0 0 ... 0 0 0 0 1]
-    def dense_to_one_hot(labels_dense, num_classes):
+    """def dense_to_one_hot(labels_dense, num_classes):
         num_labels = labels_dense.shape[0]
         index_offset = np.arange(num_labels) * num_classes
         labels_one_hot = np.zeros((num_labels, num_classes))
@@ -95,9 +95,9 @@ def load_data_and_labels(path):
         return labels_one_hot
 
     labels = dense_to_one_hot(labels_flat, labels_count)
-    labels = labels.astype(np.uint8)
+    labels = labels.astype(np.uint8)"""
 
-    return x_text, labels
+    return x_text
 
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
